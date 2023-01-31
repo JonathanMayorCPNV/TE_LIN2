@@ -1,0 +1,30 @@
+version: '3'
+networks:
+  te-docker:
+    ipam:
+      config:
+        - subnet: 192.168.32.0/24
+services:
+  server:
+    build:
+      context: ./api-server/
+    container_name: server
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    networks:
+      te-docker:
+        ipv4_address: 192.168.32.2
+  client:
+    build:
+      context: ./api-client/
+    container_name: client
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    networks:
+      te-docker:
+        ipv4_address: 192.168.32.3
+    environment:
+      - SERVER_IP=192.168.32.2 
+    depends_on: ["server"]
